@@ -1,4 +1,5 @@
-const webAppUrl = "https://script.google.com/macros/s/AKfycbzJe4H4kR_9svilR97ml5CdsPs-Ds5qt3U1uQfxEVmHsz03zj8N5T8p-X9gWIp3NkQh/exec";
+// 🛠️ REPLACE THIS WITH YOUR LIVE KOYEB APP URL
+const backendUrl = "https://your-app-name.koyeb.app/api/register"; 
 const localJsonUrl = "faqs.json";
 
 // Listen for Form Submissions
@@ -16,15 +17,24 @@ document.getElementById('form').addEventListener('submit', function(e) {
         phone: document.getElementById('phone').value,
         college: document.getElementById('college').value,
         department: document.getElementById('department').value,
-        year: document.getElementById('year').value // Captures the new dropdown choice smoothly
+        year: document.getElementById('year').value 
     };
 
-    fetch(webAppUrl, {
+    // 🔄 Changed fetch configuration to successfully hit your Koyeb Backend
+    fetch(backendUrl, {
         method: 'POST',
-        mode: 'no-cors',
         cache: 'no-store',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+            'Content-Type': 'application/json' 
+        },
         body: JSON.stringify(formData)
+    })
+    .then(async (res) => {
+        if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.message || 'Server error');
+        }
+        return res.json();
     })
     .then(() => {
         showSuccessPopup(`🎉 Successfully Registered!\nA confirmation email has been sent to:\n${userEmail}`);
@@ -32,7 +42,7 @@ document.getElementById('form').addEventListener('submit', function(e) {
     })
     .catch(error => {
         console.error('Submission processing error:', error);
-        showSuccessPopup("❌ Network connection issue. Try again.");
+        showSuccessPopup("❌ System error or connection issue. Please try again.");
     })
     .finally(() => {
         submitBtn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Register`;
